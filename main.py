@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from colorama import *
-print ("\33[21m"+Fore.RED+'slax 3.1'+Fore.RESET+" by Cheat, ['type help for command list']\33[0m\n")
+print ("\33[21m"+Fore.RED+'slax 3.2'+Fore.RESET+" by Cheat, ['type help for command list']\33[0m\n")
 import time
 import threading
 import socket
@@ -24,9 +24,8 @@ try:
     prompt='wlan0 > '
 except:
     iface='wlan0'
-    #prompt=Back.YELLOW+Fore.BLACK+'0.0.0.0 > '+host+'/24'+Back.RESET+Fore.RED+' » '+Fore.RESET
-    #prompt=Back.YELLOW+Fore.BLACK+'condorslax'+Fore.RESET+Back.RESET+Fore.RED+' » '+Fore.RESET
-    prompt='> '
+    prompt=Back.YELLOW+Fore.BLACK+'condorslax'+Fore.RESET+Back.RESET+Fore.RED+' » '+Fore.RESET
+    
 data_ready = threading.Event()
 kill_flag = threading.Event()
 class MyCompleter(object):
