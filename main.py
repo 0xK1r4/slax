@@ -21,12 +21,12 @@ host=socket.gethostbyname(name)
 
 try:
     iface=sys.argv[1]
-    prompt=Back.YELLOW+Fore.BLACK+iface+Back.RESET+Fore.RED+' » '+Fore.RESET
+    prompt='wlan0 > '
 except:
     iface='wlan0'
-    prompt=Back.YELLOW+Fore.BLACK+'0.0.0.0 > '+host+'/24'+Back.RESET+Fore.RED+' » '+Fore.RESET
+    #prompt=Back.YELLOW+Fore.BLACK+'0.0.0.0 > '+host+'/24'+Back.RESET+Fore.RED+' » '+Fore.RESET
     #prompt=Back.YELLOW+Fore.BLACK+'condorslax'+Fore.RESET+Back.RESET+Fore.RED+' » '+Fore.RESET
-
+    prompt='> '
 data_ready = threading.Event()
 kill_flag = threading.Event()
 class MyCompleter(object):
