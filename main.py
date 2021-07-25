@@ -52,9 +52,7 @@ readline.set_completer(completer.complete)
 readline.parse_and_bind('tab: complete')
 
 
-#print (new+'wificow is running')
-#print (new+'Device '+socket.gethostbyname(name)+' '+name)
-#print (new+'version = 2.0.3')
+
 
 def keyboard_poller():
     global key_pressed
