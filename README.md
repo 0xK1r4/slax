@@ -1,5 +1,5 @@
 # slax
-herramienta gratis para redes, incluye escaneos, informaciion etc
+herramienta gratis para redes, incluye escaneos, informacion etc
 
 --- modulos
 
