@@ -1,9 +1,9 @@
 # slax
-herramienta gratis para redes, incluye escaneos, informaciion etc
+herramienta gratis para redes, incluye escaneos, informaciion etc\n
 --- modulos
 
-tabulate
-colorama
+tabulate\n
+colorama\n
 psutil
 
 --- python
