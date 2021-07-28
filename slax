@@ -266,7 +266,6 @@ def info():
 
 def show():
     time.sleep(1)
-    nada=''
     aaa = subprocess.Popen('iwconfig '+iface+' | grep level', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     inf = aaa.stderr.read()+aaa.stdout.read()
     slu = (inf[:49])
