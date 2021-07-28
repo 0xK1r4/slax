@@ -1,6 +1,15 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 from colorama import *
-print ("\33[21m"+Fore.RED+'slax 3.2'+Fore.RESET+" by Cheat, ['type help for command list']\33[0m\n")
+#print ("\33[21m"+Fore.RED+'slax 3.1'+Fore.RESET+" by Cheat, ['type help for command list']\33[0m\n")
+banner='''
+  ___| |___ _ _
+ |_ -| | .'|_'_|
+ |___|_|__,|_,_|
+ condor slax V3.2
+     made by Cisco#1188
+
+'''
+print (banner)
 import time
 import threading
 import socket
@@ -18,14 +27,14 @@ from tabulate import *
 discoverx='normal'
 name=socket.gethostname()
 host=socket.gethostbyname(name)
-
+gray='\33[90m'
 try:
     iface=sys.argv[1]
-    prompt='wlan0 > '
+    prompt=Fore.BLUE+'device on '+Fore.GREEN+'('+iface+') '+gray+'[slx] # '+Fore.RESET
 except:
     iface='wlan0'
-    prompt=Back.YELLOW+Fore.BLACK+'condorslax'+Fore.RESET+Back.RESET+Fore.WHITE+' » '+Fore.RESET
-    
+    prompt=Fore.BLUE+'device on '+Fore.GREEN+'('+iface+') '+gray+'[slx] # '+Fore.RESET
+
 data_ready = threading.Event()
 kill_flag = threading.Event()
 class MyCompleter(object):
@@ -46,10 +55,9 @@ class MyCompleter(object):
         except IndexError:
             return None
 
-completer = MyCompleter(["net.discover","quit","dump","connect", "port","help","net.info","net.show","show.mac","net.arpscan"])
+completer = MyCompleter(["net.discover","quit","dump","connect","port","help","net.info","net.show","show.mac","net.arpscan","clear.data","show.ip"])
 readline.set_completer(completer.complete)
 readline.parse_and_bind('tab: complete')
-
 
 
 
@@ -71,7 +79,7 @@ def keyboard_poller():
         #config
         new='['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.GREEN+'NEW'+Fore.RESET+'] '
         inf='['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.YELLOW+'INF'+Fore.RESET+'] '
-        #prompt=Fore.BLUE+'[connection]'+Fore.RESET+'# '
+        
 
         error='['+Fore.RED+'ERROR'+Fore.RESET+'] '
         message='['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.GREEN+'MSG'+Fore.RESET+']'
@@ -165,6 +173,7 @@ def keyboard_poller():
            dataip={"ip-address": [ipf], "packed-form": [pckf]}
            print('\r'+tabulate(dataip, headers='keys', tablefmt='fancy_grid')+'                ')
         if ch=='clear.data':
+           sys.stdout.write('\r'+prompt)
            os.system('rm .scan')
            os.system('rm .discover')
            os.system('rm .pck')
@@ -173,7 +182,7 @@ def keyboard_poller():
            os.system('touch .discover')
            os.system('touch .pck')
            os.system('touch .scan2')
-           print (inf+'sucessful! ')
+           print ('\r'+inf+'sucessful! ')
 
         if ch:
             key_pressed = ch
@@ -230,7 +239,7 @@ def scan():
                      packed=open('.pck','a+')
                      packed.write(binascii.hexlify(addr.packed).decode()+'\n')
                      packed.close()
-                     print ('\r'+'['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.GREEN+'NEW'+Fore.RESET+'] '+'Device '+Fore.RED+direccion+Fore.RESET,binascii.hexlify(addr.packed).decode())
+                     print ('['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.GREEN+'NEW'+Fore.RESET+'] '+'Device '+Fore.RED+direccion+Fore.RESET,binascii.hexlify(addr.packed).decode())
                      sys.stdout.write('\r'+prompt)
                      break
 
@@ -252,7 +261,7 @@ def info():
      slu = (inf[:49])
      signallvl = (slu[43:].decode())
      time.sleep(1)
-     print ('\r'+'['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.GREEN+'NEW'+Fore.RESET+'] '+'power: '+signallvl)
+     print ('['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.GREEN+'NEW'+Fore.RESET+'] '+'power: '+signallvl)
      sys.stdout.write('\r'+prompt)
 
 def show():
@@ -318,7 +327,7 @@ def scanmac():
 
                    if mcv=='no match found.\n':
                       break
-                   print ('\r'+new+'Device '+str(mcv)+' on '+iface+'                              ')
+                   print (new+'Device '+str(mcv)+' on '+iface+'                              ')
                    sys.stdout.write('\r'+prompt)
                    break
 
@@ -378,3 +387,4 @@ if __name__ == "__main__":
     main()
     exit()
     exit()
+
