@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 from colorama import *
-#print ("\33[21m"+Fore.RED+'slax 3.1'+Fore.RESET+" by Cheat, ['type help for command list']\33[0m\n")
-#print ('コンドルへようこそ\n')
 banner='''
   ___| |___ _ _
  |_ -| | .'|_'_|
