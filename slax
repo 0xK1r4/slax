@@ -1,19 +1,21 @@
 #!/usr/bin/python3
 from colorama import *
 #print ("\33[21m"+Fore.RED+'slax 3.1'+Fore.RESET+" by Cheat, ['type help for command list']\33[0m\n")
+#print ('コンドルへようこそ\n')
 banner='''
   ___| |___ _ _
  |_ -| | .'|_'_|
  |___|_|__,|_,_|
- condor slax V3.2
+ condor slax V3.3
      made by Cisco#1188
 
-'''
+[tab] for auto completate'''
 print (banner)
 import time
 import threading
 import socket
 import sys
+sys.stdout.write('\rloading...')
 import os
 import subprocess
 import ipaddress
@@ -28,12 +30,17 @@ discoverx='normal'
 name=socket.gethostname()
 host=socket.gethostbyname(name)
 gray='\33[90m'
+greenx='\33[92m'
+
 try:
     iface=sys.argv[1]
-    prompt=Fore.BLUE+'device on '+Fore.GREEN+'('+iface+') '+gray+'[slx] # '+Fore.RESET
+    prompt=Fore.BLUE+iface+Fore.GREEN+'on '+greenx+'('+iface+') '+gray+'[hid] # '+Fore.RESET
+
 except:
     iface='wlan0'
-    prompt=Fore.BLUE+'device on '+Fore.GREEN+'('+iface+') '+gray+'[slx] # '+Fore.RESET
+    prompt=Fore.BLUE+'device.'+platform.system()+' '+Fore.GREEN+'on '+greenx+'('+iface+') '+gray+'[hid] # '+Fore.RESET
+    
+
 
 data_ready = threading.Event()
 kill_flag = threading.Event()
@@ -47,6 +54,7 @@ class MyCompleter(object):
             if text:
                 self.matches = [s for s in self.options
                                     if s and s.startswith(text)]
+
             else:
                 self.matches = self.options[:]
 
@@ -55,16 +63,16 @@ class MyCompleter(object):
         except IndexError:
             return None
 
-completer = MyCompleter(["net.discover","quit","dump","connect","port","help","net.info","net.show","show.mac","net.arpscan","clear.data","show.ip"])
+completer = MyCompleter(["net.discover","quit","dump","connect","port","help","net.info","net.show","show.mac","net.arpscan","clear.data","show.ip","tcp.vibrate"])
 readline.set_completer(completer.complete)
 readline.parse_and_bind('tab: complete')
 
-
+vibrateset='off'
 
 def keyboard_poller():
     global key_pressed
     global discoverx
-
+    global vibrateset
     loop = True
 
     while loop:
@@ -79,14 +87,16 @@ def keyboard_poller():
         #config
         new='['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.GREEN+'NEW'+Fore.RESET+'] '
         inf='['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.YELLOW+'INF'+Fore.RESET+'] '
-        
+  
 
         error='['+Fore.RED+'ERROR'+Fore.RESET+'] '
         message='['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.GREEN+'MSG'+Fore.RESET+']'
-
+        sys.stdout.write('\r')
         ch=input(prompt)
+
+        tcp=ch[:11]
         connect=ch[:7]
-        port=ch[:4]
+        port=ch[:8]
         if ch=='discover on':
            discoverx='on'
 
@@ -116,9 +126,11 @@ def keyboard_poller():
               pass
            else:
               pass
-        if port=='port':
-           fport=ch[5:]
-           print (inf+'Port set =',fport)
+        if port=='set port':
+           global fport
+           fport=ch[9:]
+
+
         if connect == 'connect':
            targetx=ch[8:]
            target=targetx[:12]
@@ -141,7 +153,7 @@ def keyboard_poller():
            print ('slax tool help modules')
            print ('normal modules:')
            print (f"""  {Fore.RED}dump {Fore.RESET}      - dump packed form to hex
-  {Fore.RED}port {Fore.RESET}      - set port to connect
+  {Fore.RED}set  {Fore.RESET}      - set option [port]
   {Fore.RED}quit {Fore.RESET}      - exit
   {Fore.RED}show.mac {Fore.RESET}  - show mac database{Fore.RESET}
   {Fore.RED}connect {Fore.RESET}   - connect to host
@@ -149,10 +161,11 @@ def keyboard_poller():
   {Fore.RED}clear.data {Fore.RESET}- clear database""")
 
            print ('net modules:')
-           print (f"""  {Fore.RED}net.discover {Fore.RESET}- scan net by icmp
-  {Fore.RED}net.show {Fore.RESET}    - net info in table
-  {Fore.RED}net.info {Fore.RESET}    - info of net
-  {Fore.RED}net.arpscan {Fore.RESET} - scan mac devices""")
+           print (f"""  {Fore.RED}net.discover {Fore.RESET}> {Fore.GREEN}scan net by icmp
+  {Fore.RED}net.show {Fore.RESET}    > {Fore.GREEN}net info in table
+  {Fore.RED}net.info {Fore.RESET}    > {Fore.GREEN}info of net
+  {Fore.RED}net.arpscan {Fore.RESET} > {Fore.GREEN}scan mac devices
+  {Fore.RED}tcp.vibrate {Fore.RESET} > {Fore.GREEN}vibrate one device per port{Fore.RESET}""")
 
         if ch=='show.mac':
            macd=open('.scan','r')
@@ -182,7 +195,7 @@ def keyboard_poller():
            os.system('touch .discover')
            os.system('touch .pck')
            os.system('touch .scan2')
-           print ('\r'+inf+'sucessful! ')
+           print ('\r'+inf+'sucessful!    ')
 
         if ch:
             key_pressed = ch
@@ -239,7 +252,7 @@ def scan():
                      packed=open('.pck','a+')
                      packed.write(binascii.hexlify(addr.packed).decode()+'\n')
                      packed.close()
-                     print ('['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.GREEN+'NEW'+Fore.RESET+'] '+'Device '+Fore.RED+direccion+Fore.RESET,binascii.hexlify(addr.packed).decode())
+                     print ('\r'+'['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.GREEN+'NEW'+Fore.RESET+'] '+'Device '+Fore.RED+direccion+Fore.RESET,binascii.hexlify(addr.packed).decode())
                      sys.stdout.write('\r'+prompt)
                      break
 
@@ -257,21 +270,36 @@ def info():
     while True:
      now=datetime.now()
      aaa = subprocess.Popen('iwconfig '+iface+' | grep level', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+     sss = subprocess.Popen('ifconfig '+iface+' | grep "RX packets"', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+     lll = sss.stderr.read()+sss.stdout.read()
+     aax=lll.decode()
      inf = aaa.stderr.read()+aaa.stdout.read()
      slu = (inf[:49])
+     bt=aax[8:]
+     btx=bt[24:]
+     remove=btx[8:]
+     btx=btx.replace(remove,'')
      signallvl = (slu[43:].decode())
      time.sleep(1)
-     print ('['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.GREEN+'NEW'+Fore.RESET+'] '+'power: '+signallvl)
-     sys.stdout.write('\r'+prompt)
+     sys.stdout.write('\r'+'['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.GREEN+'NEW'+Fore.RESET+'] '+'power: '+Fore.GREEN+'-'+signallvl+Fore.RESET+' bytes: '+btx)
+     #sys.stdout.write('\r'+prompt)
 
 def show():
     time.sleep(1)
+    nada=''
     aaa = subprocess.Popen('iwconfig '+iface+' | grep level', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     inf = aaa.stderr.read()+aaa.stdout.read()
+    sss = subprocess.Popen('ifconfig '+iface+' | grep "RX packets"', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    lll = sss.stderr.read()+sss.stdout.read()
+    aax=lll.decode()
     slu = (inf[:49])
     signallvl = (slu[43:].decode())
     power=Fore.GREEN+'-'+signallvl+Fore.RESET
-    showtab={"power": [power], "net-iface": [iface]}
+    bt=aax[8:]
+    btx=bt[24:]
+    remove=btx[8:]
+    btx=btx.replace(remove,'')
+    showtab={"power": [power], "net-iface": [iface], "bytes-received": [btx]}
     print('\r'+tabulate(showtab, headers='keys', tablefmt='fancy_grid')+'                ')
     sys.stdout.write('\r'+prompt)
 
@@ -326,7 +354,7 @@ def scanmac():
 
                    if mcv=='no match found.\n':
                       break
-                   print (new+'Device '+str(mcv)+' on '+iface+'                              ')
+                   print ('\r'+new+'Device '+str(mcv)+' on '+iface+'                              ')
                    sys.stdout.write('\r'+prompt)
                    break
 
@@ -336,6 +364,31 @@ def scanmac():
 
     tiempoFinal = datetime.now()
     tiempo = tiempoFinal - tiempoInicio
+
+def vibrate(ip):
+    vibrateset='on'
+    now = datetime.now()
+    new='['+str(now.hour)+':'+str(now.minute)+':'+str(now.second)+'] '+'['+Fore.GREEN+'NEW'+Fore.RESET+'] '
+    payload='\xfd\x07\xe8\x32\x60\xa7\xc7'
+    s=socket.socket()
+    s.connect((ip,int(fport)))
+    print (new+Back.BLUE+Fore.WHITE+'connected'+Fore.RESET+Back.RESET+' to '+ip+'   ')
+    while True:
+      s.send(payload.encode())
+      s.send(payload.encode())
+      s.send(payload.encode())
+      s.send(payload.encode())
+      s.send(payload.encode())
+      s.send(payload.encode())
+      s.send(payload.encode())
+      s.send(payload.encode())
+      s.send(payload.encode())
+      s.send(payload.encode())
+      s.send(payload.encode())
+      s.send(payload.encode())
+
+      time.sleep(0.1)
+
 
 def main():
     curr_millis = time.time() * 1000
@@ -372,6 +425,7 @@ def main():
             dump=key_pressed.lower()[:4]
             connect=key_pressed.lower()[:7]
             port=key_pressed.lower()[:4]
+            tcp=key_pressed.lower()[:11]
             if key_pressed.lower() == "net.discover":
                 scan()
             if key_pressed.lower() == 'net.info':
@@ -380,9 +434,14 @@ def main():
                 show()
             if key_pressed.lower() == 'net.arpscan':
                 scanmac()
+            if tcp == 'tcp.vibrate':
+               targetxx=key_pressed.lower()[12:]
+               vibrate(targetxx)
 
             data_ready.clear()
+
 if __name__ == "__main__":
     main()
     exit()
     exit()
+
